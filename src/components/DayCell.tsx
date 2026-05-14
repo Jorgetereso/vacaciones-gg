@@ -23,14 +23,14 @@ function buildBackground(
   settings: Settings,
 ): CSSProperties {
   if (jorge && german) return { background: settings.bothColor };
-  if (jorge) {
-    return {
-      background: `linear-gradient(to right, ${settings.jorgeColor} 50%, transparent 50%)`,
-    };
-  }
   if (german) {
     return {
-      background: `linear-gradient(to right, transparent 50%, ${settings.germanColor} 50%)`,
+      background: `linear-gradient(to right, ${settings.germanColor} 50%, transparent 50%)`,
+    };
+  }
+  if (jorge) {
+    return {
+      background: `linear-gradient(to right, transparent 50%, ${settings.jorgeColor} 50%)`,
     };
   }
   return {};
@@ -66,7 +66,7 @@ export function DayCell({
     .join(' ');
 
   const tooltipParts: string[] = [];
-  if (holiday) tooltipParts.push(`🇦🇷 ${holiday.name}`);
+  if (holiday) tooltipParts.push(`Feriado: ${holiday.name}`);
   if (bridge)
     tooltipParts.push(
       bridge === 'before'

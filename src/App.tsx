@@ -18,13 +18,14 @@ export default function App() {
     togglePerson,
     setNote,
     updateSettings,
+    toggleTheme,
     markNotified,
     replaceAll,
     clearAll,
   } = useStore();
 
   const [year, setYear] = useState<number>(CURRENT_YEAR);
-  const [activePerson, setActivePerson] = useState<Who>('jorge');
+  const [activePerson, setActivePerson] = useState<Who>('german');
   const [editingDate, setEditingDate] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
 
@@ -58,6 +59,7 @@ export default function App() {
         onOpenSettings={() => setSettingsOpen(true)}
         onImport={replaceAll}
         onMarkNotified={markNotified}
+        onToggleTheme={toggleTheme}
       />
       <main className="mx-auto max-w-7xl px-4 py-6">
         <section aria-label="Resumen" className="mb-6">
@@ -65,9 +67,12 @@ export default function App() {
         </section>
         <section className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <Legend settings={state.settings} />
-          <div className="text-xs text-slate-500">
-            Tip: click → toggle de {state.settings[activePerson === 'jorge' ? 'jorgeName' : 'germanName']}.
-            Arrastrá para marcar un rango. Click derecho (o tap largo) abre la nota.
+          <div className="text-xs text-slate-500 dark:text-slate-400">
+            Tip: click → toggle de{' '}
+            <b className="text-slate-700 dark:text-slate-200">
+              {state.settings[activePerson === 'jorge' ? 'jorgeName' : 'germanName']}
+            </b>
+            . Arrastrá para marcar un rango. Click derecho (o tap largo) abre la nota.
           </div>
         </section>
         <YearView
@@ -79,15 +84,16 @@ export default function App() {
           onContextMenu={(date) => setEditingDate(date)}
         />
         {drag.isDragging && (
-          <div className="fixed bottom-4 left-1/2 z-30 -translate-x-1/2 rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-lg">
+          <div className="fixed bottom-4 left-1/2 z-30 -translate-x-1/2 rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-lg ring-1 ring-slate-800 animate-fade-in dark:bg-slate-100 dark:text-slate-900 dark:ring-slate-300">
             {drag.targetValue ? '✓ Marcando' : '✕ Desmarcando'}{' '}
             {drag.rangeSize} {drag.rangeSize === 1 ? 'día' : 'días'} de{' '}
             {state.settings[activePerson === 'jorge' ? 'jorgeName' : 'germanName']}
           </div>
         )}
       </main>
-      <footer className="mx-auto max-w-7xl px-4 pb-8 text-center text-xs text-slate-400">
-        Prototipo · datos solo en este navegador (localStorage) · compartí con Exportar/Importar
+      <footer className="mx-auto max-w-7xl px-4 pb-8 text-center text-xs text-slate-400 dark:text-slate-500">
+        Prototipo · datos solo en este navegador (localStorage) · compartí con
+        Exportar/Importar
       </footer>
 
       <EditDayModal

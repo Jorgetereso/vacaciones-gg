@@ -1,11 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { DayEntry, RecentChange, Settings, State, Who } from '../types';
+import type {
+  DayEntry,
+  RecentChange,
+  Settings,
+  State,
+  Theme,
+  Who,
+} from '../types';
 
 const STORAGE_KEY = 'vacaciones-gg-v1';
 const MAX_RECENT_CHANGES = 200;
 
 const DEFAULT_SETTINGS: Settings = {
-  yearlyQuota: 20,
+  yearlyQuota: 45,
   jorgeName: 'Jorge',
   germanName: 'Germán',
   jorgeEmail: 'jorge@3dar.com',
@@ -13,6 +20,7 @@ const DEFAULT_SETTINGS: Settings = {
   jorgeColor: '#3b82f6',
   germanColor: '#f97316',
   bothColor: '#10b981',
+  theme: 'dark',
 };
 
 const DEFAULT_STATE: State = {
@@ -27,15 +35,25 @@ function load(): State {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return DEFAULT_STATE;
     const parsed = JSON.parse(raw) as Partial<State>;
-    return {
+    const merged: State = {
       days: parsed.days ?? {},
       settings: { ...DEFAULT_SETTINGS, ...(parsed.settings ?? {}) },
       recentChanges: parsed.recentChanges ?? [],
       lastNotifiedAt: parsed.lastNotifiedAt ?? 0,
     };
+    // Migración: si quedó el cupo viejo de 20 (default v1) y nunca lo tocaron, lo subo a 45.
+    // No toco valores custom (e.g. 14, 30, 60).
+    if (merged.settings.yearlyQuota === 20) {
+      merged.settings.yearlyQuota = 45;
+    }
+    return merged;
   } catch {
     return DEFAULT_STATE;
   }
+}
+
+function applyThemeClass(theme: Theme) {
+  document.documentElement.classList.toggle('dark', theme === 'dark');
 }
 
 function cleanDay(entry: DayEntry): DayEntry | null {
@@ -63,6 +81,7 @@ export function useStore() {
     } catch {
       // ignorar quota errors
     }
+    applyThemeClass(state.settings.theme);
   }, [state]);
 
   const setPersonOnRange = useCallback(
@@ -92,31 +111,28 @@ export function useStore() {
     [],
   );
 
-  const togglePerson = useCallback(
-    (date: string, who: Who) => {
-      setState((prev) => {
-        const current = prev.days[date] ?? {};
-        const value = !current[who];
-        const days = { ...prev.days };
-        const next: DayEntry = { ...current, [who]: value || undefined };
-        const cleaned = cleanDay(next);
-        if (cleaned) days[date] = cleaned;
-        else delete days[date];
-        const change: RecentChange = {
-          date,
-          who,
-          action: value ? 'add' : 'remove',
-          at: Date.now(),
-        };
-        return {
-          ...prev,
-          days,
-          recentChanges: pushChange(prev.recentChanges, change),
-        };
-      });
-    },
-    [],
-  );
+  const togglePerson = useCallback((date: string, who: Who) => {
+    setState((prev) => {
+      const current = prev.days[date] ?? {};
+      const value = !current[who];
+      const days = { ...prev.days };
+      const next: DayEntry = { ...current, [who]: value || undefined };
+      const cleaned = cleanDay(next);
+      if (cleaned) days[date] = cleaned;
+      else delete days[date];
+      const change: RecentChange = {
+        date,
+        who,
+        action: value ? 'add' : 'remove',
+        at: Date.now(),
+      };
+      return {
+        ...prev,
+        days,
+        recentChanges: pushChange(prev.recentChanges, change),
+      };
+    });
+  }, []);
 
   const setNote = useCallback((date: string, note: string) => {
     setState((prev) => {
@@ -134,6 +150,16 @@ export function useStore() {
     setState((prev) => ({
       ...prev,
       settings: { ...prev.settings, ...patch },
+    }));
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setState((prev) => ({
+      ...prev,
+      settings: {
+        ...prev.settings,
+        theme: prev.settings.theme === 'dark' ? 'light' : 'dark',
+      },
     }));
   }, []);
 
@@ -159,6 +185,7 @@ export function useStore() {
     togglePerson,
     setNote,
     updateSettings,
+    toggleTheme,
     markNotified,
     replaceAll,
     clearAll,

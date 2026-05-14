@@ -1,6 +1,7 @@
-import type { State, Who } from '../types';
+import dayjs from 'dayjs';
+import type { Holiday, State, Who } from '../types';
 import { todayKey, isWeekend } from './dates';
-import { isHoliday } from './holidays';
+import { HOLIDAYS, isHoliday } from './holidays';
 
 export type PersonStats = {
   taken: number; // días pasados marcados (no cuentan finde ni feriado)
@@ -43,6 +44,17 @@ export type UpcomingDay = {
   german: boolean;
   note?: string;
 };
+
+export function nextHoliday(): { holiday: Holiday; daysUntil: number } | null {
+  const today = todayKey();
+  for (const h of HOLIDAYS) {
+    if (h.date >= today) {
+      const daysUntil = dayjs(h.date).diff(dayjs(today), 'day');
+      return { holiday: h, daysUntil };
+    }
+  }
+  return null;
+}
 
 export function upcomingDays(state: State, limit = 5): UpcomingDay[] {
   const today = todayKey();

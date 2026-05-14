@@ -1,5 +1,7 @@
 export type Who = 'jorge' | 'german';
 
+export type Theme = 'dark' | 'light';
+
 export type DayEntry = {
   jorge?: boolean;
   german?: boolean;
@@ -22,6 +24,7 @@ export type Settings = {
   jorgeColor: string;
   germanColor: string;
   bothColor: string;
+  theme: Theme;
 };
 
 export type State = {

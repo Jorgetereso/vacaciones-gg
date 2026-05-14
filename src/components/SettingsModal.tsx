@@ -10,6 +10,66 @@ type Props = {
   onClearAll: () => void;
 };
 
+function PersonSection({
+  title,
+  name,
+  email,
+  color,
+  emailPlaceholder,
+  onChange,
+}: {
+  title: string;
+  name: string;
+  email: string;
+  color: string;
+  emailPlaceholder?: string;
+  onChange: (patch: { name?: string; email?: string; color?: string }) => void;
+}) {
+  return (
+    <div className="rounded-lg border border-slate-200 p-3 dark:border-slate-800">
+      <div className="mb-3 flex items-center gap-2">
+        <span
+          className="h-4 w-4 rounded-full"
+          style={{ background: color, boxShadow: `0 0 10px ${color}66` }}
+        />
+        <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          {title}
+        </h3>
+      </div>
+      <div className="grid grid-cols-3 gap-2">
+        <label className="col-span-2 block text-xs text-slate-600 dark:text-slate-400">
+          Nombre
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => onChange({ name: e.target.value })}
+            className="input mt-1"
+          />
+        </label>
+        <label className="block text-xs text-slate-600 dark:text-slate-400">
+          Color
+          <input
+            type="color"
+            value={color}
+            onChange={(e) => onChange({ color: e.target.value })}
+            className="mt-1 h-9 w-full cursor-pointer rounded-md border border-slate-200 dark:border-slate-700"
+          />
+        </label>
+        <label className="col-span-3 block text-xs text-slate-600 dark:text-slate-400">
+          Email
+          <input
+            type="email"
+            value={email}
+            placeholder={emailPlaceholder}
+            onChange={(e) => onChange({ email: e.target.value })}
+            className="input mt-1"
+          />
+        </label>
+      </div>
+    </div>
+  );
+}
+
 export function SettingsModal({ open, onClose, settings, onSave, onClearAll }: Props) {
   const [form, setForm] = useState<Settings>(settings);
 
@@ -30,7 +90,11 @@ export function SettingsModal({ open, onClose, settings, onSave, onClearAll }: P
             type="button"
             className="btn btn-secondary"
             onClick={() => {
-              if (confirm('¿Borrar todos los días marcados y volver a defaults? Esto no se puede deshacer.')) {
+              if (
+                confirm(
+                  '¿Borrar todos los días marcados y volver a defaults? Esto no se puede deshacer.',
+                )
+              ) {
                 onClearAll();
                 onClose();
               }
@@ -55,106 +119,85 @@ export function SettingsModal({ open, onClose, settings, onSave, onClearAll }: P
       }
     >
       <div className="space-y-4">
-        <label className="block text-xs font-medium text-slate-600">
-          Cupo anual (días)
-          <input
-            type="number"
-            min={0}
-            max={365}
-            value={form.yearlyQuota}
-            onChange={(e) =>
-              update({ yearlyQuota: Math.max(0, Number(e.target.value) || 0) })
-            }
-            className="mt-1 w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
-          />
-        </label>
-
-        <div className="rounded-md border border-slate-200 p-3">
-          <div className="mb-3 flex items-center gap-2">
-            <span
-              className="h-4 w-4 rounded-full"
-              style={{ background: form.jorgeColor }}
+        <div className="grid grid-cols-2 gap-3">
+          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400">
+            Cupo anual (días)
+            <input
+              type="number"
+              min={0}
+              max={365}
+              value={form.yearlyQuota}
+              onChange={(e) =>
+                update({ yearlyQuota: Math.max(0, Number(e.target.value) || 0) })
+              }
+              className="input mt-1"
             />
-            <h3 className="text-sm font-semibold text-slate-700">Persona 1</h3>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            <label className="col-span-2 block text-xs text-slate-600">
-              Nombre
-              <input
-                type="text"
-                value={form.jorgeName}
-                onChange={(e) => update({ jorgeName: e.target.value })}
-                className="mt-1 w-full rounded-md border border-slate-200 px-2 py-1.5 text-sm"
-              />
-            </label>
-            <label className="block text-xs text-slate-600">
-              Color
-              <input
-                type="color"
-                value={form.jorgeColor}
-                onChange={(e) => update({ jorgeColor: e.target.value })}
-                className="mt-1 h-9 w-full cursor-pointer rounded-md border border-slate-200"
-              />
-            </label>
-            <label className="col-span-3 block text-xs text-slate-600">
-              Email
-              <input
-                type="email"
-                value={form.jorgeEmail}
-                onChange={(e) => update({ jorgeEmail: e.target.value })}
-                className="mt-1 w-full rounded-md border border-slate-200 px-2 py-1.5 text-sm"
-              />
-            </label>
+          </label>
+          <div className="text-xs text-slate-600 dark:text-slate-400">
+            Tema
+            <div className="mt-1 inline-flex rounded-lg ring-1 ring-slate-200 dark:ring-slate-700">
+              <button
+                type="button"
+                className={`rounded-l-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                  form.theme === 'dark'
+                    ? 'bg-slate-900 text-white dark:bg-slate-200 dark:text-slate-900'
+                    : 'text-slate-600 dark:text-slate-300'
+                }`}
+                onClick={() => update({ theme: 'dark' })}
+              >
+                🌙 Oscuro
+              </button>
+              <button
+                type="button"
+                className={`rounded-r-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                  form.theme === 'light'
+                    ? 'bg-slate-900 text-white dark:bg-slate-200 dark:text-slate-900'
+                    : 'text-slate-600 dark:text-slate-300'
+                }`}
+                onClick={() => update({ theme: 'light' })}
+              >
+                🌞 Claro
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="rounded-md border border-slate-200 p-3">
-          <div className="mb-3 flex items-center gap-2">
-            <span
-              className="h-4 w-4 rounded-full"
-              style={{ background: form.germanColor }}
-            />
-            <h3 className="text-sm font-semibold text-slate-700">Persona 2</h3>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            <label className="col-span-2 block text-xs text-slate-600">
-              Nombre
-              <input
-                type="text"
-                value={form.germanName}
-                onChange={(e) => update({ germanName: e.target.value })}
-                className="mt-1 w-full rounded-md border border-slate-200 px-2 py-1.5 text-sm"
-              />
-            </label>
-            <label className="block text-xs text-slate-600">
-              Color
-              <input
-                type="color"
-                value={form.germanColor}
-                onChange={(e) => update({ germanColor: e.target.value })}
-                className="mt-1 h-9 w-full cursor-pointer rounded-md border border-slate-200"
-              />
-            </label>
-            <label className="col-span-3 block text-xs text-slate-600">
-              Email (para "Avisar")
-              <input
-                type="email"
-                value={form.germanEmail}
-                onChange={(e) => update({ germanEmail: e.target.value })}
-                placeholder="german@…"
-                className="mt-1 w-full rounded-md border border-slate-200 px-2 py-1.5 text-sm"
-              />
-            </label>
-          </div>
-        </div>
+        <PersonSection
+          title="Germán"
+          name={form.germanName}
+          email={form.germanEmail}
+          color={form.germanColor}
+          emailPlaceholder="german@…"
+          onChange={(p) =>
+            update({
+              germanName: p.name ?? form.germanName,
+              germanEmail: p.email ?? form.germanEmail,
+              germanColor: p.color ?? form.germanColor,
+            })
+          }
+        />
 
-        <label className="block text-xs text-slate-600">
+        <PersonSection
+          title="Jorge"
+          name={form.jorgeName}
+          email={form.jorgeEmail}
+          color={form.jorgeColor}
+          onChange={(p) =>
+            update({
+              jorgeName: p.name ?? form.jorgeName,
+              jorgeEmail: p.email ?? form.jorgeEmail,
+              jorgeColor: p.color ?? form.jorgeColor,
+            })
+          }
+        />
+
+        <label className="block text-xs text-slate-600 dark:text-slate-400">
           Color "Los dos"
           <input
             type="color"
             value={form.bothColor}
             onChange={(e) => update({ bothColor: e.target.value })}
-            className="mt-1 h-9 w-20 cursor-pointer rounded-md border border-slate-200"
+            className="mt-1 h-9 w-20 cursor-pointer rounded-md border border-slate-200 dark:border-slate-700"
           />
         </label>
       </div>

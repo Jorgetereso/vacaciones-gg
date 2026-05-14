@@ -4,25 +4,27 @@ type Props = { settings: Settings };
 
 export function Legend({ settings }: Props) {
   return (
-    <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600">
-      <span className="font-medium text-slate-500">Referencias:</span>
-      <span className="chip">
-        <span
-          className="h-3 w-3 rounded-sm"
-          style={{
-            background: `linear-gradient(to right, ${settings.jorgeColor} 50%, transparent 50%)`,
-          }}
-        />
-        {settings.jorgeName}
+    <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
+      <span className="font-semibold text-slate-500 dark:text-slate-400">
+        Referencias:
       </span>
       <span className="chip">
         <span
           className="h-3 w-3 rounded-sm"
           style={{
-            background: `linear-gradient(to right, transparent 50%, ${settings.germanColor} 50%)`,
+            background: `linear-gradient(to right, ${settings.germanColor} 50%, transparent 50%)`,
           }}
         />
         {settings.germanName}
+      </span>
+      <span className="chip">
+        <span
+          className="h-3 w-3 rounded-sm"
+          style={{
+            background: `linear-gradient(to right, transparent 50%, ${settings.jorgeColor} 50%)`,
+          }}
+        />
+        {settings.jorgeName}
       </span>
       <span className="chip">
         <span
