@@ -1,8 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Dashboard } from './components/Dashboard';
+import { DashboardMobile } from './components/DashboardMobile';
 import { EditDayModal } from './components/EditDayModal';
 import { Header } from './components/Header';
 import { Legend } from './components/Legend';
+import { MobileMonthView } from './components/MobileMonthView';
 import { SettingsModal } from './components/SettingsModal';
 import { YearView } from './components/YearView';
 import { useDragSelect } from './hooks/useDragSelect';
@@ -63,11 +65,16 @@ export default function App() {
       />
       <main className="mx-auto max-w-7xl px-4 py-6">
         <section aria-label="Resumen" className="mb-6">
-          <Dashboard state={state} year={year} />
+          <div className="hidden sm:block">
+            <Dashboard state={state} year={year} />
+          </div>
+          <div className="sm:hidden">
+            <DashboardMobile state={state} year={year} />
+          </div>
         </section>
         <section className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <Legend settings={state.settings} />
-          <div className="text-xs text-slate-500 dark:text-slate-400">
+          <div className="hidden text-xs text-slate-500 sm:block dark:text-slate-400">
             Tip: click → toggle de{' '}
             <b className="text-slate-700 dark:text-slate-200">
               {state.settings[activePerson === 'jorge' ? 'jorgeName' : 'germanName']}
@@ -75,14 +82,27 @@ export default function App() {
             . Arrastrá para marcar un rango. Click derecho (o tap largo) abre la nota.
           </div>
         </section>
-        <YearView
-          year={year}
-          days={state.days}
-          settings={state.settings}
-          activePerson={activePerson}
-          dragState={dragState}
-          onContextMenu={(date) => setEditingDate(date)}
-        />
+        <div className="hidden sm:block">
+          <YearView
+            year={year}
+            days={state.days}
+            settings={state.settings}
+            activePerson={activePerson}
+            dragState={dragState}
+            onContextMenu={(date) => setEditingDate(date)}
+          />
+        </div>
+        <div className="sm:hidden">
+          <MobileMonthView
+            year={year}
+            onYearChange={setYear}
+            days={state.days}
+            settings={state.settings}
+            activePerson={activePerson}
+            dragState={dragState}
+            onContextMenu={(date) => setEditingDate(date)}
+          />
+        </div>
         {drag.isDragging && (
           <div className="fixed bottom-4 left-1/2 z-30 -translate-x-1/2 rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-lg ring-1 ring-slate-800 animate-fade-in dark:bg-slate-100 dark:text-slate-900 dark:ring-slate-300">
             {drag.targetValue ? '✓ Marcando' : '✕ Desmarcando'}{' '}

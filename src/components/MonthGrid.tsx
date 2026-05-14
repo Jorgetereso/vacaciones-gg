@@ -17,6 +17,7 @@ type Props = {
   days: State['days'];
   settings: Settings;
   activePerson: Who;
+  hideTitle?: boolean;
   dragState: {
     isDragging: boolean;
     isInRange: (key: string) => boolean;
@@ -32,6 +33,7 @@ export function MonthGrid({
   days,
   settings,
   activePerson,
+  hideTitle,
   dragState,
   onContextMenu,
 }: Props) {
@@ -44,14 +46,16 @@ export function MonthGrid({
 
   return (
     <div className="surface surface-hover p-3">
-      <div className="mb-2 flex items-baseline justify-between">
-        <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-          {MONTH_NAMES_ES[month]}
-        </h3>
-        <span className="text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">
-          {year}
-        </span>
-      </div>
+      {!hideTitle && (
+        <div className="mb-2 flex items-baseline justify-between">
+          <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+            {MONTH_NAMES_ES[month]}
+          </h3>
+          <span className="text-[10px] uppercase tracking-wide text-slate-400 dark:text-slate-500">
+            {year}
+          </span>
+        </div>
+      )}
       <div className="mb-1 grid grid-cols-7 gap-0.5 text-[10px] font-semibold text-slate-400 dark:text-slate-500">
         {WEEKDAY_SHORT_ES.map((d, i) => (
           <div key={i} className="text-center">
