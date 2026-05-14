@@ -135,7 +135,7 @@ export function Header({
             onClick={() => mailto && onMarkNotified()}
             title={avisarTitle}
           >
-            📧 Avisar a {state.settings.germanName}
+            📧 Notificar vía mail
             {pending > 0 && (
               <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white/90 px-1.5 text-xs font-bold text-blue-700 shadow-sm">
                 {pending}
@@ -162,8 +162,8 @@ export function Header({
       <div className="border-t border-slate-100 bg-blue-50/50 dark:border-slate-900 dark:bg-blue-500/5">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-1.5 text-[11px] text-slate-600 dark:text-slate-400">
           <span>
-            🔒 Nada se manda automáticamente — apretá <b>Avisar</b> cuando
-            quieras notificar a {state.settings.germanName}.
+            🔒 Nada se manda automáticamente — apretá <b>Notificar vía mail</b>{' '}
+            cuando quieras avisarle a {state.settings.germanName}.
           </span>
         </div>
       </div>
