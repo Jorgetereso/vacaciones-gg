@@ -2,6 +2,15 @@ import type { Settings } from '../types';
 
 type Props = { settings: Settings };
 
+function Swatch({ color }: { color: string }) {
+  return (
+    <span
+      className="h-3 w-3 rounded-sm"
+      style={{ background: color, boxShadow: `0 0 8px ${color}66` }}
+    />
+  );
+}
+
 export function Legend({ settings }: Props) {
   return (
     <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600 dark:text-slate-300">
@@ -9,28 +18,15 @@ export function Legend({ settings }: Props) {
         Referencias:
       </span>
       <span className="chip">
-        <span
-          className="h-3 w-3 rounded-sm"
-          style={{
-            background: `linear-gradient(to right, ${settings.germanColor} 50%, transparent 50%)`,
-          }}
-        />
+        <Swatch color={settings.germanColor} />
         {settings.germanName}
       </span>
       <span className="chip">
-        <span
-          className="h-3 w-3 rounded-sm"
-          style={{
-            background: `linear-gradient(to right, transparent 50%, ${settings.jorgeColor} 50%)`,
-          }}
-        />
+        <Swatch color={settings.jorgeColor} />
         {settings.jorgeName}
       </span>
       <span className="chip">
-        <span
-          className="h-3 w-3 rounded-sm"
-          style={{ background: settings.bothColor }}
-        />
+        <Swatch color={settings.bothColor} />
         Los dos
       </span>
       <span className="chip">

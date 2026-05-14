@@ -118,3 +118,22 @@ export function formatRange(r: { start: string; end: string }): string {
 }
 
 export const SUPPORTED_YEARS = [2024, 2025, 2026, 2027, 2028, 2029, 2030];
+
+// Returns '#0f172a' (slate-900) or '#ffffff' depending on bg luminance.
+// Use to pick the most readable text color over a colored cell.
+export function contrastingTextColor(hex: string): string {
+  let value = hex.trim();
+  if (value.startsWith('#')) value = value.slice(1);
+  if (value.length === 3) {
+    value = value
+      .split('')
+      .map((c) => c + c)
+      .join('');
+  }
+  if (value.length !== 6) return '#0f172a';
+  const r = parseInt(value.slice(0, 2), 16);
+  const g = parseInt(value.slice(2, 4), 16);
+  const b = parseInt(value.slice(4, 6), 16);
+  const lum = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return lum > 0.6 ? '#0f172a' : '#ffffff';
+}

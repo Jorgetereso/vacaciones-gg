@@ -1,4 +1,5 @@
 import type { CSSProperties, PointerEvent, MouseEvent } from 'react';
+import { contrastingTextColor } from '../lib/dates';
 import type { DayEntry, Holiday, Settings } from '../types';
 
 type Props = {
@@ -9,7 +10,6 @@ type Props = {
   isWeekend: boolean;
   holiday?: Holiday;
   bridge?: 'before' | 'after' | null;
-  // Entry proyectado: incluye preview de drag si corresponde.
   entry?: DayEntry;
   inDrag: boolean;
   settings: Settings;
@@ -17,23 +17,21 @@ type Props = {
   onContextMenu: (e: MouseEvent<HTMLButtonElement>) => void;
 };
 
-function buildBackground(
-  jorge: boolean,
-  german: boolean,
-  settings: Settings,
-): CSSProperties {
-  if (jorge && german) return { background: settings.bothColor };
-  if (german) {
-    return {
-      background: `linear-gradient(to right, ${settings.germanColor} 50%, transparent 50%)`,
-    };
+function cellFill(entry: DayEntry | undefined, settings: Settings): {
+  bg: string | null;
+  text: string | null;
+} {
+  if (!entry) return { bg: null, text: null };
+  if (entry.jorge && entry.german) {
+    return { bg: settings.bothColor, text: contrastingTextColor(settings.bothColor) };
   }
-  if (jorge) {
-    return {
-      background: `linear-gradient(to right, transparent 50%, ${settings.jorgeColor} 50%)`,
-    };
+  if (entry.german) {
+    return { bg: settings.germanColor, text: contrastingTextColor(settings.germanColor) };
   }
-  return {};
+  if (entry.jorge) {
+    return { bg: settings.jorgeColor, text: contrastingTextColor(settings.jorgeColor) };
+  }
+  return { bg: null, text: null };
 }
 
 export function DayCell({
@@ -50,17 +48,18 @@ export function DayCell({
   onPointerDown,
   onContextMenu,
 }: Props) {
-  const jorge = !!entry?.jorge;
-  const german = !!entry?.german;
+  const { bg, text } = cellFill(entry, settings);
+  const isMarked = bg !== null;
 
   const classes = [
     'day-cell',
     isToday && 'is-today',
     isWeekend && 'is-weekend',
-    holiday && 'is-holiday',
+    holiday && !isMarked && 'is-holiday',
     bridge && 'is-bridge',
     !inCurrentMonth && 'is-other-month',
     inDrag && 'in-drag',
+    isMarked && 'is-marked',
   ]
     .filter(Boolean)
     .join(' ');
@@ -76,27 +75,26 @@ export function DayCell({
   if (entry?.note) tooltipParts.push(`📝 ${entry.note}`);
   const title = tooltipParts.length > 0 ? tooltipParts.join('\n') : date;
 
+  const style: CSSProperties = isMarked
+    ? { background: bg!, color: text!, boxShadow: `0 6px 18px -10px ${bg}` }
+    : {};
+
   return (
     <button
       type="button"
       data-day-key={date}
       className={classes}
-      style={{ touchAction: 'none' }}
+      style={{ touchAction: 'none', ...style }}
       onPointerDown={onPointerDown}
       onContextMenu={onContextMenu}
       title={title}
     >
-      <span
-        className="absolute inset-0 rounded-md"
-        style={buildBackground(jorge, german, settings)}
-        aria-hidden
-      />
       <span className="relative z-10 flex h-full w-full items-center justify-center">
         {dayNumber}
       </span>
       {entry?.note && (
         <span
-          className="absolute bottom-0.5 right-0.5 z-10 text-[8px] leading-none"
+          className="absolute bottom-0.5 right-1 z-10 text-[8px] leading-none drop-shadow-sm"
           aria-label="tiene nota"
         >
           📝

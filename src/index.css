@@ -92,6 +92,18 @@
   .dark .day-cell.in-drag {
     @apply ring-slate-400;
   }
+  .day-cell.is-marked {
+    @apply border-transparent font-bold;
+  }
+  .day-cell.is-marked:hover {
+    filter: brightness(1.08);
+  }
+  .day-cell.is-marked.is-today {
+    @apply ring-2 ring-white ring-offset-2 ring-offset-slate-50;
+  }
+  .dark .day-cell.is-marked.is-today {
+    @apply ring-white ring-offset-slate-950;
+  }
 
   .btn {
     @apply inline-flex items-center justify-center gap-1.5 rounded-lg
