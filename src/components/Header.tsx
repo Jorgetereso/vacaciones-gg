@@ -16,6 +16,8 @@ type Props = {
   onToggleTheme: () => void;
 };
 
+const LOGO_URL = `${import.meta.env.BASE_URL}logo_3dario.webp`;
+
 function ThemeButton({
   theme,
   onClick,
@@ -33,6 +35,19 @@ function ThemeButton({
     >
       {theme === 'dark' ? '🌞' : '🌙'}
     </button>
+  );
+}
+
+function UserChip() {
+  return (
+    <div className="flex items-center gap-2 rounded-full px-1 py-1 ring-1 ring-slate-200 dark:ring-slate-800">
+      <span className="grid h-7 w-7 place-items-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-xs font-bold text-white">
+        J
+      </span>
+      <span className="hidden pr-3 text-sm font-medium text-slate-700 sm:inline dark:text-slate-200">
+        Jorge Tereso
+      </span>
+    </div>
   );
 }
 
@@ -61,23 +76,40 @@ export function Header({
       : `Configurá el email de ${state.settings.germanName} en ⚙ Settings para usar este botón`;
 
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200/80 bg-white/85 backdrop-blur-md dark:border-slate-800/80 dark:bg-slate-950/75">
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-3 px-4 py-3">
-        <div className="flex items-center gap-3">
-          <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500 text-xl shadow-lg shadow-indigo-500/30">
-            📅
+    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
+      {/* Row 1: logo + nav pill + user */}
+      <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2.5">
+        <a
+          href="https://3dar.io"
+          target="_blank"
+          rel="noreferrer"
+          className="flex shrink-0 items-center"
+          aria-label="3dar.io"
+        >
+          <img
+            src={LOGO_URL}
+            alt="3dar.io"
+            className="h-7 w-auto select-none"
+            draggable={false}
+          />
+        </a>
+        <span
+          aria-hidden
+          className="hidden h-6 w-px bg-slate-200 sm:inline-block dark:bg-slate-800"
+        />
+        <nav className="flex items-center gap-1.5">
+          <span className="rounded-md bg-blue-50 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-blue-700 ring-1 ring-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-500/20">
+            Vacaciones
           </span>
-          <div>
-            <h1 className="text-base font-bold leading-tight text-slate-900 dark:text-slate-50">
-              Vacaciones GG
-            </h1>
-            <p className="text-[10px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
-              {state.settings.germanName} & {state.settings.jorgeName}
-            </p>
-          </div>
+        </nav>
+        <div className="ml-auto flex items-center gap-3">
+          <UserChip />
         </div>
+      </div>
 
-        <div className="ml-auto flex flex-wrap items-center gap-2">
+      {/* Row 2: toolbar */}
+      <div className="border-t border-slate-100 bg-slate-50/70 dark:border-slate-900 dark:bg-slate-950/60">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-2.5">
           <select
             value={year}
             onChange={(e) => onYearChange(Number(e.target.value))}
@@ -97,21 +129,19 @@ export function Header({
             settings={state.settings}
           />
 
-          <div className="relative">
-            <a
-              className={`btn ${mailto ? 'btn-primary' : 'btn-secondary pointer-events-none opacity-60'}`}
-              href={mailto ?? undefined}
-              onClick={() => mailto && onMarkNotified()}
-              title={avisarTitle}
-            >
-              📧 Avisar a {state.settings.germanName}
-              {pending > 0 && (
-                <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white/90 px-1.5 text-xs font-bold text-slate-900 shadow-sm">
-                  {pending}
-                </span>
-              )}
-            </a>
-          </div>
+          <a
+            className={`btn ${mailto ? 'btn-primary' : 'btn-secondary pointer-events-none opacity-60'}`}
+            href={mailto ?? undefined}
+            onClick={() => mailto && onMarkNotified()}
+            title={avisarTitle}
+          >
+            📧 Avisar a {state.settings.germanName}
+            {pending > 0 && (
+              <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white/90 px-1.5 text-xs font-bold text-blue-700 shadow-sm">
+                {pending}
+              </span>
+            )}
+          </a>
 
           <ImportExport state={state} onImport={onImport} />
 
@@ -128,8 +158,9 @@ export function Header({
         </div>
       </div>
 
-      <div className="border-t border-slate-100 bg-slate-50/50 dark:border-slate-900 dark:bg-slate-950/40">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-1.5 text-[11px] text-slate-500 dark:text-slate-400">
+      {/* Row 3: banner */}
+      <div className="border-t border-slate-100 bg-blue-50/50 dark:border-slate-900 dark:bg-blue-500/5">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-1.5 text-[11px] text-slate-600 dark:text-slate-400">
           <span>
             🔒 Nada se manda automáticamente — apretá <b>Avisar</b> cuando
             quieras notificar a {state.settings.germanName}.

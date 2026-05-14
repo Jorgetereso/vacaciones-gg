@@ -20,7 +20,7 @@ const DEFAULT_SETTINGS: Settings = {
   jorgeColor: '#3b82f6',
   germanColor: '#f97316',
   bothColor: '#10b981',
-  theme: 'dark',
+  theme: 'light',
 };
 
 const DEFAULT_STATE: State = {

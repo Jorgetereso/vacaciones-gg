@@ -127,8 +127,10 @@
     @apply text-slate-300 hover:bg-slate-800/70;
   }
   .btn-primary {
-    background-image: linear-gradient(135deg, #6366f1 0%, #3b82f6 50%, #06b6d4 100%);
-    @apply text-white shadow-md hover:brightness-110;
+    @apply bg-blue-600 text-white shadow-sm hover:bg-blue-700;
+  }
+  .dark .btn-primary {
+    @apply bg-blue-500 hover:bg-blue-400;
   }
 
   .chip {
